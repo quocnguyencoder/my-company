@@ -19,24 +19,29 @@ const TableRow = ({ employee }: Props) => {
         cursor: 'pointer',
       }}
     >
-      <Td>{employee.department}</Td>
+      <Td>{employee.department !== null ? employee.department : '*******'}</Td>
       <Td isNumeric>{employee.eid}</Td>
       <Td>
         <Flex align="center">
           <Avatar size="md" mr={2} src={svg} />
           <Flex flexDir="column">
-            <Heading size="sm" letterSpacing="tight">
-              {employee.name}
+            <Heading size="sm" textTransform="capitalize">
+              {employee.name !== null
+                ? employee.name.toLowerCase()
+                : '******************'}
             </Heading>
-            <Text fontSize="sm" color="gray">
-              {employee.position}
+            <Text fontSize="sm" color="gray" textTransform="capitalize">
+              {employee.position.toLowerCase()}
             </Text>
           </Flex>
         </Flex>
       </Td>
-      <Td>{employee.email}</Td>
-
-      <Td>{employee.birthdate}</Td>
+      <Td>
+        {employee.email !== null ? employee.email : '*********************'}
+      </Td>
+      <Td>
+        {employee.birthdate !== null ? employee.birthdate : '************'}
+      </Td>
       <Td isNumeric>
         <Text fontWeight="bold" display="inline-table">
           {employee.salary !== null

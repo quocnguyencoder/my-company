@@ -24,7 +24,7 @@ export default function handler(
           connection.execute(
             `SELECT JSON_OBJECT('department' value p.TENPB,'eid' value n.MSNV, 
             'name' value ten, 'birthdate' value NGAYSINH, 'email' value EMAIL, 
-            'salary' value LUONG, 'taxNumber' value MSTHUE)
+            'salary' value LUONG, 'taxNumber' value MSTHUE, 'position' value c.CHUCVU)
             FROM BMCSDL_COMPANY.NHANVIEN n,BMCSDL_COMPANY.CHUCVU C, BMCSDL_COMPANY.PHONGBAN p 
             WHERE n.MSNV = c.MSNV AND c.MSPB = p.MSPB`,
             [],

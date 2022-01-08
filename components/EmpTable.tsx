@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Flex, Heading, Table, Thead, Tbody, Tr, Th } from '@chakra-ui/react'
-
 import { Employee } from '../types/user'
 import { useGlobalContext } from '../context/GlobalContext'
 import TableRow from './common/TableRow'
