@@ -1,30 +1,39 @@
-import React from 'react'
-import {
-  Flex,
-  Heading,
-  Avatar,
-  Text,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-} from '@chakra-ui/react'
-import { createAvatar } from '@dicebear/avatars'
-import * as style from '@dicebear/adventurer'
+import React, { useState, useEffect } from 'react'
+import { Flex, Heading, Table, Thead, Tbody, Tr, Th } from '@chakra-ui/react'
+
+import { Employee } from '../types/user'
+import { useGlobalContext } from '../context/GlobalContext'
+import TableRow from './common/TableRow'
 
 const EmpTable = () => {
-  const svg = createAvatar(style, {
-    seed: '2-Quoc',
-    dataUri: true,
-  })
+  const [employees, setEmployees] = useState<Employee[]>([])
+  const { info } = useGlobalContext()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/employees', {
+          method: 'POST',
+          body: JSON.stringify(info),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        const data = await response.json()
+        setEmployees(data as Employee[])
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    fetchData()
+  }, [])
+
   return (
     <>
       <Flex justifyContent="space-between" mt={8}>
         <Flex align="flex-end">
           <Heading as="h2" size="lg" letterSpacing="tight">
-            Phòng tài chính
+            Nhân viên
           </Heading>
         </Flex>
       </Flex>
@@ -32,50 +41,19 @@ const EmpTable = () => {
         <Table variant="unstyled" mt={4}>
           <Thead>
             <Tr color="gray">
+              <Th>Phòng ban</Th>
               <Th isNumeric>MSNV</Th>
               <Th>Tên</Th>
               <Th>Email</Th>
-              <Th isNumeric>SĐT</Th>
               <Th>Ngày sinh</Th>
               <Th isNumeric>Lương</Th>
               <Th> MS Thuế</Th>
             </Tr>
           </Thead>
           <Tbody>
-            <Tr
-              _hover={{
-                background: 'white',
-                color: 'teal.500',
-                cursor: 'pointer',
-              }}
-            >
-              <Td isNumeric>2</Td>
-              <Td>
-                <Flex align="center">
-                  <Avatar size="md" mr={2} src={svg} />
-                  <Flex flexDir="column">
-                    <Heading size="sm" letterSpacing="tight">
-                      Quoc
-                    </Heading>
-                    <Text fontSize="sm" color="gray">
-                      Quản lý
-                    </Text>
-                  </Flex>
-                </Flex>
-              </Td>
-              <Td>test@gmail.com</Td>
-              <Td>01123123</Td>
-              <Td>01/11/2000</Td>
-              <Td isNumeric>
-                <Text fontWeight="bold" display="inline-table">
-                  {Intl.NumberFormat('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND',
-                  }).format(1000000)}
-                </Text>
-              </Td>
-              <Td>01123123</Td>
-            </Tr>
+            {employees.map((employee) => (
+              <TableRow key={`empRow-${employee.eid}`} employee={employee} />
+            ))}
           </Tbody>
         </Table>
       </Flex>

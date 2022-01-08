@@ -1,14 +1,16 @@
-export interface Account{
+export interface ConnectInfo {
+  ip: string
+  svName: string
   username: string
   password: string
+  eid: number
 }
 
-export interface Employee{
+export interface Employee {
   eid: string
   name: string
   email: string
-  phone: string
-  birthday: Date
+  birthdate: Date
   salary: number
   taxNumber: string
   department: string

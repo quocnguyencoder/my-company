@@ -10,8 +10,68 @@ import {
   Stack,
   Image,
 } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
+import { useGlobalContext } from '../context/GlobalContext'
+import { useRouter } from 'next/router'
+import { ConnectInfo } from '../types/user'
 
 export default function SplitScreen() {
+  const [ip, setIP] = useState('')
+  const [svName, setSvName] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const { info, setInfo } = useGlobalContext()
+  const router = useRouter()
+
+  const saveLoginInfo = () => {
+    localStorage.setItem('ip', ip)
+    localStorage.setItem('svName', svName)
+    localStorage.setItem('username', username)
+    localStorage.setItem('password', password)
+  }
+
+  const handleLogin = async () => {
+    const info = {
+      ip: ip,
+      svName: svName,
+      username: username,
+      password: password,
+      eid: null,
+    }
+    const fetchData = await fetch('/api/login', {
+      method: 'POST',
+      body: JSON.stringify(info),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const response = await fetchData
+    //console.log(response)
+    if (response.status === 200) {
+      response.json().then((json) => {
+        info.eid = json.eid
+        //console.log(info)
+        saveLoginInfo()
+        setInfo(info as ConnectInfo)
+        router.push('/')
+      })
+    } else {
+      alert('sth went wrong')
+    }
+  }
+
+  useEffect(() => {
+    //console.log(info)
+    if (info !== undefined) {
+      router.push('/')
+    } else {
+      setIP(localStorage.getItem('ip') || '')
+      setSvName(localStorage.getItem('svName') || '')
+      setUsername(localStorage.getItem('username') || '')
+      setPassword(localStorage.getItem('password') || '')
+    }
+  }, [])
+
   return (
     <Stack minH={'100vh'} direction={{ base: 'column', md: 'row' }}>
       <Flex p={8} flex={1} align={'center'} justify={'center'}>
@@ -19,19 +79,26 @@ export default function SplitScreen() {
           <Heading fontSize={'2xl'}>Sign in to your account</Heading>
           <FormControl id="host-ip">
             <FormLabel>Host ip</FormLabel>
-            <Input />
+            <Input value={ip} onChange={(e) => setIP(e.target.value)} />
           </FormControl>
           <FormControl id="service-name">
             <FormLabel>Service name</FormLabel>
-            <Input />
+            <Input value={svName} onChange={(e) => setSvName(e.target.value)} />
           </FormControl>
-          <FormControl id="email">
-            <FormLabel>Email address</FormLabel>
-            <Input type="email" />
+          <FormControl id="username">
+            <FormLabel>Username</FormLabel>
+            <Input
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
           </FormControl>
           <FormControl id="password">
             <FormLabel>Password</FormLabel>
-            <Input type="password" />
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </FormControl>
 
           <Stack spacing={6}>
@@ -40,10 +107,14 @@ export default function SplitScreen() {
               align={'start'}
               justify={'space-between'}
             >
-              <Checkbox>Remember me</Checkbox>
+              <Checkbox defaultIsChecked>Remember me</Checkbox>
               <Link color={'blue.500'}>Forgot password?</Link>
             </Stack>
-            <Button colorScheme={'blue'} variant={'solid'}>
+            <Button
+              onClick={handleLogin}
+              colorScheme={'blue'}
+              variant={'solid'}
+            >
               Sign in
             </Button>
           </Stack>
