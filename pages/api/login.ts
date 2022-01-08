@@ -27,7 +27,8 @@ export default function handler(
         .then((connection) => {
           connection.execute(
             `SELECT MSNV
-       FROM BMCSDL_COMPANY.TAIKHOAN WHERE USERNAME = '${info.username}'`,
+            FROM BMCSDL_COMPANY.TAIKHOAN 
+            WHERE USERNAME = '${info.username}'`,
             [],
             function (err, result) {
               try {
@@ -36,7 +37,7 @@ export default function handler(
                 console.error(err)
               }
               if (err) {
-                //console.error(err.message)
+                console.error(err.message)
                 res.status(500).end()
               } else {
                 res.json({ eid: result.rows[0][0] })
@@ -46,7 +47,8 @@ export default function handler(
             }
           )
         })
-        .catch(() => {
+        .catch((err) => {
+          console.error(err.message)
           res.status(500).end()
           return resolve()
         })

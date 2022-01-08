@@ -9,7 +9,9 @@ import {
   Link,
   Stack,
   Image,
+  useToast,
 } from '@chakra-ui/react'
+import Loading from '../components/common/Loading'
 import { useEffect, useState } from 'react'
 import { useGlobalContext } from '../context/GlobalContext'
 import { useRouter } from 'next/router'
@@ -20,8 +22,10 @@ export default function SplitScreen() {
   const [svName, setSvName] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const { info, setInfo } = useGlobalContext()
   const router = useRouter()
+  const toast = useToast()
 
   const saveLoginInfo = () => {
     localStorage.setItem('ip', ip)
@@ -38,6 +42,7 @@ export default function SplitScreen() {
       password: password,
       eid: null,
     }
+    setIsLoading(true)
     const fetchData = await fetch('/api/login', {
       method: 'POST',
       body: JSON.stringify(info),
@@ -53,10 +58,27 @@ export default function SplitScreen() {
         //console.log(info)
         saveLoginInfo()
         setInfo(info as ConnectInfo)
+        setIsLoading(false)
+        toast({
+          title: 'Login successfully!',
+          description: `Welcome, ${info.username}!`,
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+          position: 'top',
+        })
         router.push('/')
       })
     } else {
-      alert('sth went wrong')
+      setIsLoading(false)
+      toast({
+        title: 'Login failed',
+        description: `Something went wrong!`,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position: 'top',
+      })
     }
   }
 
@@ -74,6 +96,7 @@ export default function SplitScreen() {
 
   return (
     <Stack minH={'100vh'} direction={{ base: 'column', md: 'row' }}>
+      {isLoading && <Loading />}
       <Flex p={8} flex={1} align={'center'} justify={'center'}>
         <Stack spacing={4} w={'full'} maxW={'md'}>
           <Heading fontSize={'2xl'}>Sign in to your account</Heading>
