@@ -39,10 +39,12 @@ const TableRow = ({ employee }: Props) => {
       <Td>{employee.birthdate}</Td>
       <Td isNumeric>
         <Text fontWeight="bold" display="inline-table">
-          {Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-          }).format(employee.salary)}
+          {employee.salary !== null
+            ? Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+              }).format(employee.salary)
+            : '**********'}
         </Text>
       </Td>
       <Td>{employee.taxNumber}</Td>

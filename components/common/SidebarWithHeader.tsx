@@ -36,6 +36,8 @@ import {
 import { IconType } from 'react-icons'
 import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 import { ReactText } from 'react'
+import { useGlobalContext } from '../../context/GlobalContext'
+import { useRouter } from 'next/router'
 
 interface LinkItemProps {
   name: string
@@ -55,6 +57,7 @@ export default function SidebarWithHeader({
   children: ReactNode
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
+
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
       <SidebarContent
@@ -155,6 +158,14 @@ interface MobileProps extends FlexProps {
 }
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const { colorMode, toggleColorMode } = useColorMode()
+  const { setInfo } = useGlobalContext()
+  const router = useRouter()
+
+  const handleLogout = () => {
+    setInfo(undefined)
+    router.push('/login')
+  }
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -227,7 +238,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               <MenuItem>Settings</MenuItem>
               <MenuItem>Billing</MenuItem>
               <MenuDivider />
-              <MenuItem>Sign out</MenuItem>
+              <MenuItem onClick={handleLogout}>Sign out</MenuItem>
             </MenuList>
           </Menu>
         </Flex>
