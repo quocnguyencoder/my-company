@@ -24,9 +24,9 @@ interface LinkItemProps {
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Nhân viên', tabName: 'empTable', icon: FiHome },
   { name: 'Quản lý hoạt động', tabName: 'auditTable', icon: FiTrendingUp },
-  { name: 'Explore', tabName: 'explore', icon: FiCompass },
-  { name: 'Favorites', tabName: 'favorites', icon: FiStar },
-  { name: 'Settings', tabName: 'settings', icon: FiSettings },
+  { name: 'Khám phá', tabName: 'explore', icon: FiCompass },
+  { name: 'Lưu trữ', tabName: 'favorites', icon: FiStar },
+  { name: 'Cài đặt', tabName: 'settings', icon: FiSettings },
 ]
 
 interface SidebarProps extends BoxProps {

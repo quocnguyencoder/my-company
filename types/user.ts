@@ -10,7 +10,7 @@ export interface Employee {
   eid: string
   name: string
   email: string
-  birthdate: Date
+  birthdate: string
   salary: number
   taxNumber: string
   department: string

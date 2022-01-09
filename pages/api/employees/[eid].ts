@@ -27,8 +27,8 @@ export default function handler(
             'name' value ten, 'birthdate' value NGAYSINH, 'email' value EMAIL, 
             'salary' value LUONG, 'taxNumber' value MSTHUE, 'position' value c.CHUCVU)
             FROM BMCSDL_COMPANY.NHANVIEN n,BMCSDL_COMPANY.CHUCVU C, BMCSDL_COMPANY.PHONGBAN p 
-            WHERE n.MSNV = c.MSNV AND c.MSPB = p.MSPB AND n.MSNV = ${eid}`,
-            [],
+            WHERE n.MSNV = c.MSNV AND c.MSPB = p.MSPB AND n.MSNV = :eid`,
+            [eid],
             function (err, result) {
               try {
                 connection.close()

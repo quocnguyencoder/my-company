@@ -5,12 +5,18 @@ import { Employee } from '../../types/user'
 
 interface Props {
   employee: Employee
+  onOpen: () => void
+  setSelectedEmployee: (emp: Employee) => void
 }
-const TableRow = ({ employee }: Props) => {
+const TableRow = ({ employee, onOpen, setSelectedEmployee }: Props) => {
   const svg = createAvatar(style, {
     seed: `${employee.eid}-${employee.name}`,
     dataUri: true,
   })
+  const handleOpenModal = () => {
+    setSelectedEmployee(employee)
+    onOpen()
+  }
   return (
     <Tr
       _hover={{
@@ -18,8 +24,9 @@ const TableRow = ({ employee }: Props) => {
         color: 'teal.500',
         cursor: 'pointer',
       }}
+      onClick={handleOpenModal}
     >
-      <Td>{employee.department !== null ? employee.department : '*******'}</Td>
+      <Td>{employee.department || '*******'}</Td>
       <Td isNumeric>{employee.eid}</Td>
       <Td>
         <Flex align="center">
@@ -36,12 +43,8 @@ const TableRow = ({ employee }: Props) => {
           </Flex>
         </Flex>
       </Td>
-      <Td>
-        {employee.email !== null ? employee.email : '*********************'}
-      </Td>
-      <Td>
-        {employee.birthdate !== null ? employee.birthdate : '************'}
-      </Td>
+      <Td>{employee.email || '*********************'}</Td>
+      <Td>{employee.birthdate || '************'}</Td>
       <Td isNumeric>
         <Text fontWeight="bold" display="inline-table">
           {employee.salary !== null
@@ -50,7 +53,7 @@ const TableRow = ({ employee }: Props) => {
                 currency: 'USD',
                 maximumFractionDigits: 0,
               }).format(employee.salary)
-            : '**********'}
+            : '*******'}
         </Text>
       </Td>
       <Td>{employee.taxNumber}</Td>

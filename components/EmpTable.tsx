@@ -1,12 +1,25 @@
 import React, { useState, useEffect } from 'react'
-import { Flex, Heading, Table, Thead, Tbody, Tr, Th } from '@chakra-ui/react'
+import {
+  Flex,
+  Heading,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  useDisclosure,
+} from '@chakra-ui/react'
 import { Employee } from '../types/user'
 import { useGlobalContext } from '../context/GlobalContext'
 import TableRow from './common/TableRow'
+import EmpInfoModal from './EmpInfoModal'
 
 const EmpTable = () => {
   const [employees, setEmployees] = useState<Employee[]>([])
   const { info } = useGlobalContext()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee>()
+  const [loadTable, setLoadTable] = useState(1)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,7 +38,7 @@ const EmpTable = () => {
       }
     }
     fetchData()
-  }, [])
+  }, [loadTable])
 
   return (
     <>
@@ -51,10 +64,21 @@ const EmpTable = () => {
           </Thead>
           <Tbody>
             {employees.map((employee) => (
-              <TableRow key={`empRow-${employee.eid}`} employee={employee} />
+              <TableRow
+                key={`empRow-${employee.eid}`}
+                employee={employee}
+                onOpen={onOpen}
+                setSelectedEmployee={setSelectedEmployee}
+              />
             ))}
           </Tbody>
         </Table>
+        <EmpInfoModal
+          isOpen={isOpen}
+          onClose={onClose}
+          selectedEmployee={selectedEmployee}
+          setLoadTable={setLoadTable}
+        />
       </Flex>
     </>
   )
