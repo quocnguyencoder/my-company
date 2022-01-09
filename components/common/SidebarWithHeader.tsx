@@ -8,13 +8,10 @@ import {
 } from '@chakra-ui/react'
 import SidebarContent from './SidebarContent'
 import MobileNav from './MobileNav'
-import { Employee } from '../../types/user'
 
 export default function SidebarWithHeader({
-  currEmp,
   children,
 }: {
-  currEmp: Employee
   children: ReactNode
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -39,7 +36,7 @@ export default function SidebarWithHeader({
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
-      <MobileNav currEmp={currEmp} onOpen={onOpen} />
+      <MobileNav onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} p="4">
         {children}
       </Box>

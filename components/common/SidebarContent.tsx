@@ -21,14 +21,15 @@ import { ReactText } from 'react'
 
 interface LinkItemProps {
   name: string
+  tabName: string
   icon: IconType
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Nhân viên', icon: FiHome },
-  { name: 'Quản lý hoạt động', icon: FiTrendingUp },
-  { name: 'Explore', icon: FiCompass },
-  { name: 'Favorites', icon: FiStar },
-  { name: 'Settings', icon: FiSettings },
+  { name: 'Nhân viên', tabName: 'empTable', icon: FiHome },
+  { name: 'Quản lý hoạt động', tabName: 'auditTable', icon: FiTrendingUp },
+  { name: 'Explore', tabName: 'explore', icon: FiCompass },
+  { name: 'Favorites', tabName: 'favorites', icon: FiStar },
+  { name: 'Settings', tabName: 'settings', icon: FiSettings },
 ]
 
 interface SidebarProps extends BoxProps {

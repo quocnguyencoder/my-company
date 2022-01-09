@@ -22,15 +22,13 @@ import { useGlobalContext } from '../../context/GlobalContext'
 import { useRouter } from 'next/router'
 import { createAvatar } from '@dicebear/avatars'
 import * as style from '@dicebear/adventurer'
-import { Employee } from '../../types/user'
 
 interface MobileProps extends FlexProps {
-  currEmp: Employee
   onOpen: () => void
 }
-const MobileNav = ({ currEmp, onOpen, ...rest }: MobileProps) => {
+const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const { colorMode, toggleColorMode } = useColorMode()
-  const { setInfo } = useGlobalContext()
+  const { setInfo, currEmp } = useGlobalContext()
   const router = useRouter()
 
   const handleLogout = () => {
@@ -38,7 +36,7 @@ const MobileNav = ({ currEmp, onOpen, ...rest }: MobileProps) => {
     router.push('/login')
   }
   //console.log(currEmp)
-  return currEmp !== undefined ? (
+  return (
     <Flex
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 4 }}
@@ -83,7 +81,9 @@ const MobileNav = ({ currEmp, onOpen, ...rest }: MobileProps) => {
                 <Avatar
                   size={'sm'}
                   src={createAvatar(style, {
-                    seed: `${currEmp.eid}-${currEmp.name}`,
+                    seed: `${currEmp ? currEmp.eid : ''}-${
+                      currEmp ? currEmp.name : ''
+                    }`,
                     dataUri: true,
                   })}
                 />
@@ -94,14 +94,14 @@ const MobileNav = ({ currEmp, onOpen, ...rest }: MobileProps) => {
                   ml="2"
                 >
                   <Text fontSize="sm" textTransform="capitalize">
-                    {currEmp.name.toLowerCase()}
+                    {currEmp ? currEmp.name.toLowerCase() : ''}
                   </Text>
                   <Text
                     fontSize="xs"
                     color="gray.600"
                     textTransform="capitalize"
                   >
-                    {currEmp.position.toLowerCase()}
+                    {currEmp ? currEmp.position.toLowerCase() : ''}
                   </Text>
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>
@@ -114,8 +114,8 @@ const MobileNav = ({ currEmp, onOpen, ...rest }: MobileProps) => {
               borderColor={useColorModeValue('gray.200', 'gray.700')}
             >
               <MenuItem>Profile</MenuItem>
-              <MenuItem>Settings</MenuItem>
-              <MenuItem>Billing</MenuItem>
+              {/* <MenuItem>Settings</MenuItem>
+              <MenuItem>Billing</MenuItem> */}
               <MenuDivider />
               <MenuItem onClick={handleLogout}>Sign out</MenuItem>
             </MenuList>
@@ -123,8 +123,6 @@ const MobileNav = ({ currEmp, onOpen, ...rest }: MobileProps) => {
         </Flex>
       </HStack>
     </Flex>
-  ) : (
-    <></>
   )
 }
 
