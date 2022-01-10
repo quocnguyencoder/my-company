@@ -10,3 +10,9 @@ export interface Department {
   did: number
   dname: string
 }
+
+export interface Position {
+  eid: number
+  position: string
+  did: number
+}

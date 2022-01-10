@@ -9,19 +9,25 @@ import {
   Th,
   useDisclosure,
   useToast,
+  Button,
 } from '@chakra-ui/react'
+import { AddIcon } from '@chakra-ui/icons'
 import { Employee } from '../types/user'
 import { useGlobalContext } from '../context/GlobalContext'
 import TableRow from './common/TableRow'
 import EmpInfoModal from './EmpInfoModal'
 import { useRouter } from 'next/router'
 import * as ROUTES from '../routes'
+import AddEmpModal from './AddEmpModal'
 
 const EmpTable = () => {
   const [employees, setEmployees] = useState<Employee[]>([])
   const { info } = useGlobalContext()
+  // vars to handle opening or closing employee detail modal
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [openAddModal, setOpenAddModal] = useState(false)
   const [selectedEmployee, setSelectedEmployee] = useState<Employee>()
+  // state for reloading table
   const [loadTable, setLoadTable] = useState(true)
   const router = useRouter()
   const toast = useToast()
@@ -73,6 +79,10 @@ const EmpTable = () => {
             Nhân viên
           </Heading>
         </Flex>
+        <Button colorScheme="green" onClick={() => setOpenAddModal(true)}>
+          <AddIcon mr={2} />
+          {'Thêm nhân viên'}
+        </Button>
       </Flex>
       <Flex overflow="auto">
         <Table variant="unstyled" mt={4}>
@@ -98,6 +108,11 @@ const EmpTable = () => {
             ))}
           </Tbody>
         </Table>
+        <AddEmpModal
+          isOpen={openAddModal}
+          onClose={() => setOpenAddModal(false)}
+          setLoadTable={setLoadTable}
+        />
         <EmpInfoModal
           isOpen={isOpen}
           onClose={onClose}

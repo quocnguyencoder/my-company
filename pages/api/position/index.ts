@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import OracleDB from 'oracledb'
+import { Position } from '../../../types/database'
 import { ConnectInfo } from '../../../types/user'
 
 interface Message {
@@ -12,7 +13,6 @@ export default function handler(
   res: NextApiResponse<Message>
 ) {
   return new Promise<void>((resolve) => {
-    const { eid } = req.query
     const info = req.body.info as ConnectInfo
 
     const getConnection = async () => {
@@ -22,14 +22,13 @@ export default function handler(
         connectString: `(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = ${info.ip})(PORT = 1521))(CONNECT_DATA =(SERVICE_NAME= ${info.svName})))`,
       })
     }
-    if (req.method === 'PUT') {
-      const did = req.body.did as number
+    if (req.method === 'POST') {
+      const data = req.body.data as Position
       getConnection()
         .then((connection) => {
           connection.execute(
-            `UPDATE BMCSDL_COMPANY.CHUCVU
-                SET MSPB =:did WHERE MSNV = :eid`,
-            [did, eid] as OracleDB.BindParameters[],
+            `INSERT INTO BMCSDL_COMPANY.CHUCVU VALUES(:eid,:position,:did)`,
+            [data.eid, data.position, data.did],
             { autoCommit: true },
             function (err, result) {
               try {
@@ -41,11 +40,10 @@ export default function handler(
                 console.error(err.message)
                 res.status(500).json({ message: err.message })
               } else {
-                //console.log(result)
                 if (result.rowsAffected === 0) {
-                  res.status(500).json({ message: 'Nothing was updated' })
+                  res.status(500).json({ message: 'Nothing was inserted' })
                 } else {
-                  res.json({ message: `Update successfully!` })
+                  res.json({ message: `Inserted successfully!` })
                   res.status(200).end()
                 }
               }
@@ -55,7 +53,7 @@ export default function handler(
         })
         .catch((err) => {
           console.error(err.message)
-          res.status(500).json({ message: err.message })
+          res.status(500).end()
           return resolve()
         })
     }

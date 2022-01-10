@@ -98,6 +98,11 @@ const EmpInfoModal = ({
     return resDep.length === 0 ? -1 : resDep[0].did
   }
 
+  const didToDepName = (did: number) => {
+    const resDep = departments.filter((dep) => dep.did == did)
+    return resDep.length === 0 ? '' : resDep[0].dname
+  }
+
   // keep track of user input
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const name = event.currentTarget.name
@@ -184,6 +189,14 @@ const EmpInfoModal = ({
               `Chuyển phòng ban thành công`,
               'success'
             )
+            setEmpInfo({
+              ...empInfo,
+              ['department']: didToDepName(selectedDep),
+            })
+            setSelectedEmployee({
+              ...empInfo,
+              ['department']: didToDepName(selectedDep),
+            })
             setLoadTable(true)
             setEditable(false)
           } else {
@@ -235,7 +248,11 @@ const EmpInfoModal = ({
         response.json().then((json) => {
           const message = json.message
           if (response.status === 200) {
-            openToast('Delete successfully', `Detail: ${message}!`, 'success')
+            openToast(
+              'Delete successfully',
+              `Xóa nhân viên thành công!`,
+              'success'
+            )
             setLoadTable(true)
             handleCloseModal()
           } else {
@@ -323,7 +340,7 @@ const EmpInfoModal = ({
               <FormLabel>Lương</FormLabel>
               <Input
                 type="number"
-                value={empInfo.salary || 0}
+                value={empInfo.salary || ''}
                 name={'salary'}
                 onChange={handleChange}
               />
