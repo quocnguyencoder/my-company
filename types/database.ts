@@ -7,6 +7,6 @@ export interface AuditTrail {
 }
 
 export interface Department {
-  did: string
+  did: number
   dname: string
 }

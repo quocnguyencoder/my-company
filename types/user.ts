@@ -7,7 +7,7 @@ export interface ConnectInfo {
 }
 
 export interface Employee {
-  eid: string
+  eid: number
   name: string
   email: string
   birthdate: string

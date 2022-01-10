@@ -37,7 +37,7 @@ const EmpInfoModal = ({
   const [empInfo, setEmpInfo] = useState<Employee>(selectedEmployee)
   const [isEditable, setEditable] = useState(false)
   const [departments, setDepartments] = useState<Department[]>([])
-  const [selectedDep, setSelectedDep] = useState('')
+  const [selectedDep, setSelectedDep] = useState(0)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const { info } = useGlobalContext()
   const toast = useToast()
@@ -95,7 +95,7 @@ const EmpInfoModal = ({
 
   const depNameToID = (dname: string) => {
     const resDep = departments.filter((dep) => dep.dname === dname)
-    return resDep.length === 0 ? '' : resDep[0].did
+    return resDep.length === 0 ? -1 : resDep[0].did
   }
 
   // keep track of user input
@@ -121,57 +121,102 @@ const EmpInfoModal = ({
   }
 
   // check if any info is updated
-  const hasNoUpdatedInfo = () => {
+  const hasUpdatedInfo = () => {
     const cpOriginalEmp = { ...selectedEmployee } as Employee
-    return JSON.stringify(cpOriginalEmp) === JSON.stringify(empInfo)
+    return !(JSON.stringify(cpOriginalEmp) === JSON.stringify(empInfo))
   }
 
+  // check if department info updated
+  const hasUpdatedDep = () =>
+    selectedDep !== depNameToID(empInfo.department) && selectedDep !== 0
+
   const handleUpdateEmpInfo = () => {
-    if (hasEmptyField()) {
+    const updateEmpData = async () => {
+      try {
+        const requestUpdateEmp = await fetch(`/api/employees/${empInfo.eid}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            info: info,
+            data: empInfo,
+            did: selectedDep,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        const response = await requestUpdateEmp
+        response.json().then((json) => {
+          const message = json.message
+          if (response.status === 200) {
+            openToast(
+              'Update successfully',
+              `Cập nhật thông tin thành công!`,
+              'success'
+            )
+            setLoadTable(true)
+            setEditable(false)
+          } else {
+            openToast('Update Failed!', `Detail: ${message}!`, 'error')
+          }
+        })
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    const updateEmpDep = async () => {
+      try {
+        const requestUpdateEmp = await fetch(`/api/position/${empInfo.eid}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            info: info,
+            did: selectedDep,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        const response = await requestUpdateEmp
+        response.json().then((json) => {
+          const message = json.message
+          if (response.status === 200) {
+            openToast(
+              'Position update successfully',
+              `Chuyển phòng ban thành công`,
+              'success'
+            )
+            setLoadTable(true)
+            setEditable(false)
+          } else {
+            openToast(
+              'Department Update Failed!',
+              `Detail: ${message}!`,
+              'error'
+            )
+          }
+        })
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    if (hasEmptyField() || selectedDep === 0) {
       openToast(
         'Thông tin không hợp lệ',
         'Không được để trống thông tin',
         'error'
       )
-    } else if (hasNoUpdatedInfo()) {
+    } else if (hasUpdatedInfo() && hasUpdatedDep()) {
+      updateEmpDep()
+      updateEmpData()
+    } else if (hasUpdatedInfo()) {
+      updateEmpData()
+    } else if (hasUpdatedDep()) {
+      updateEmpDep()
+    } else {
       openToast(
         'Thông tin chưa được thay đổi',
         'Không có thông tin được thay đổi',
         'error'
       )
-    } else {
-      const updateEmpData = async () => {
-        try {
-          const requestUpdateEmp = await fetch(
-            `/api/employees/${empInfo.eid}`,
-            {
-              method: 'PUT',
-              body: JSON.stringify({
-                info: info,
-                data: empInfo,
-                did: selectedDep,
-              }),
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            }
-          )
-          const response = await requestUpdateEmp
-          response.json().then((json) => {
-            const message = json.message
-            if (response.status === 200) {
-              openToast('Update successfully', `Detail: ${message}!`, 'success')
-              setLoadTable(true)
-              setEditable(false)
-            } else {
-              openToast('Update Failed!', `Detail: ${message}!`, 'error')
-            }
-          })
-        } catch (err) {
-          console.error(err)
-        }
-      }
-      updateEmpData()
     }
   }
 
@@ -262,7 +307,7 @@ const EmpInfoModal = ({
                 placeholder="Chọn phòng ban"
                 value={selectedDep}
                 name={'department'}
-                onChange={(e) => setSelectedDep(e.target.value)}
+                onChange={(e) => setSelectedDep(Number(e.target.value))}
               >
                 {departments
                   .filter((dep) => dep.dname !== null)
