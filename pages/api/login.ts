@@ -6,15 +6,18 @@ import { ConnectInfo } from '../../types/user'
 type Data = {
   eid: number
 }
+type Message = {
+  message: string
+}
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<Data | Message>
 ) {
   return new Promise<void>((resolve) => {
     if (req.method === 'POST') {
-      const info = req.body as ConnectInfo
-      //console.log(info)
+      const info = req.body.info as ConnectInfo
+      //console.log(req.body)
       const getConnection = async () => {
         return OracleDB.getConnection({
           user: info.username,
@@ -28,8 +31,8 @@ export default function handler(
           connection.execute(
             `SELECT MSNV
             FROM BMCSDL_COMPANY.TAIKHOAN 
-            WHERE USERNAME = '${info.username}'`,
-            [],
+            WHERE USERNAME = :username`,
+            [info.username],
             function (err, result) {
               try {
                 connection.close()
@@ -38,7 +41,7 @@ export default function handler(
               }
               if (err) {
                 console.error(err.message)
-                res.status(500).end()
+                res.status(500).json({ message: err.message })
               } else {
                 res.json({ eid: result.rows[0][0] })
                 res.status(200).end()
@@ -49,7 +52,7 @@ export default function handler(
         })
         .catch((err) => {
           console.error(err.message)
-          res.status(500).end()
+          res.status(500).json({ message: err.message })
           return resolve()
         })
     }

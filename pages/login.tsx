@@ -45,7 +45,7 @@ export default function SplitScreen() {
     setIsLoading(true)
     const fetchData = await fetch('/api/login', {
       method: 'POST',
-      body: JSON.stringify(info),
+      body: JSON.stringify({ info: info }),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -70,14 +70,17 @@ export default function SplitScreen() {
         router.push('/')
       })
     } else {
-      setIsLoading(false)
-      toast({
-        title: 'Login failed',
-        description: `Something went wrong!`,
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-        position: 'top',
+      response.json().then((json) => {
+        const message = json.message
+        setIsLoading(false)
+        toast({
+          title: 'Login failed',
+          description: `${message}`,
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+          position: 'top',
+        })
       })
     }
   }

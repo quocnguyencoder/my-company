@@ -1,7 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import OracleDB from 'oracledb'
-import { ConnectInfo, Employee } from '../../../types/user'
+import { ConnectInfo } from '../../types/user'
+import { Department } from '../../types/database'
 
 interface Message {
   message: string
@@ -9,7 +10,7 @@ interface Message {
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Employee[] | Message>
+  res: NextApiResponse<Department[] | Message>
 ) {
   return new Promise<void>((resolve) => {
     if (req.method === 'POST') {
@@ -26,11 +27,8 @@ export default function handler(
       getConnection()
         .then((connection) => {
           connection.execute(
-            `SELECT JSON_OBJECT('department' value p.TENPB,'eid' value n.MSNV, 
-            'name' value ten, 'birthdate' value NGAYSINH, 'email' value EMAIL, 
-            'salary' value LUONG, 'taxNumber' value MSTHUE, 'position' value c.CHUCVU)
-            FROM BMCSDL_COMPANY.NHANVIEN n,BMCSDL_COMPANY.CHUCVU C, BMCSDL_COMPANY.PHONGBAN p 
-            WHERE n.MSNV = c.MSNV AND c.MSPB = p.MSPB`,
+            `SELECT JSON_OBJECT('did' value MSPB,'dname' value TENPB)
+            FROM BMCSDL_COMPANY.PHONGBAN`,
             [],
             function (err, result) {
               try {
@@ -42,9 +40,9 @@ export default function handler(
                 console.error(err.message)
                 res.status(500).json({ message: err.message })
               } else {
-                const empList = result.rows.map((row) => JSON.parse(row[0]))
-                //console.log(empList)
-                res.json(empList as Employee[])
+                const depList = result.rows.map((row) => JSON.parse(row[0]))
+                res.json(depList as Department[])
+                //console.log(depList)
                 res.status(200).end()
               }
               return resolve()

@@ -20,7 +20,7 @@ const Home: NextPage = () => {
         try {
           const response = await fetch(`/api/employees/${info.eid}`, {
             method: 'POST',
-            body: JSON.stringify(info),
+            body: JSON.stringify({ info: info }),
             headers: {
               'Content-Type': 'application/json',
             },

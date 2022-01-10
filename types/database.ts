@@ -5,3 +5,8 @@ export interface AuditTrail {
   sqlQuery: string
   statementType: string
 }
+
+export interface Department {
+  did: string
+  dname: string
+}
