@@ -32,13 +32,9 @@ const TableRow = ({ employee, onOpen, setSelectedEmployee }: Props) => {
         <Flex align="center">
           <Avatar size="md" mr={2} src={svg} />
           <Flex flexDir="column">
-            <Heading size="sm" textTransform="capitalize">
-              {employee.name !== null
-                ? employee.name.toLowerCase()
-                : '******************'}
-            </Heading>
-            <Text fontSize="sm" color="gray" textTransform="capitalize">
-              {employee.position.toLowerCase()}
+            <Heading size="sm">{employee.name || '******************'}</Heading>
+            <Text fontSize="sm" color="gray">
+              {employee.position || '********'}
             </Text>
           </Flex>
         </Flex>

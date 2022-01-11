@@ -28,8 +28,10 @@ export default function handler(
             `SELECT JSON_OBJECT('department' value p.TENPB,'eid' value n.MSNV, 
             'name' value ten, 'birthdate' value NGAYSINH, 'email' value EMAIL, 
             'salary' value LUONG, 'taxNumber' value MSTHUE, 'position' value c.CHUCVU)
-            FROM BMCSDL_COMPANY.NHANVIEN n,BMCSDL_COMPANY.CHUCVU C, BMCSDL_COMPANY.PHONGBAN p 
-            WHERE n.MSNV = c.MSNV AND c.MSPB = p.MSPB`,
+            FROM BMCSDL_COMPANY.NHANVIEN n LEFT OUTER JOIN BMCSDL_COMPANY.CHUCVU C 
+            ON n.MSNV = c.MSNV
+            LEFT OUTER JOIN BMCSDL_COMPANY.PHONGBAN p 
+            ON c.MSPB = p.MSPB`,
             [],
             function (err, result) {
               try {

@@ -86,6 +86,41 @@ const AddEmpModal = ({ isOpen, onClose, setLoadTable }: Props) => {
     return !allKeys.every((key) => empInfo[key] !== initEmpValue[key])
   }
 
+  const handleDeleteEmp = (message: string) => {
+    const deleteEmpData = async () => {
+      try {
+        const requestDeleteEmp = await fetch(`/api/employees/${empInfo.eid}`, {
+          method: 'DELETE',
+          body: JSON.stringify({ info: info }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        const response = await requestDeleteEmp
+
+        response.json().then((json) => {
+          const delete_message = json.message
+          if (response.status === 200) {
+            openToast(
+              'Failed To Add New Employee!',
+              `Detail: ${message}!`,
+              'error'
+            )
+          } else {
+            openToast(
+              'Employee Delete Failed',
+              `Detail: ${delete_message}!`,
+              'error'
+            )
+          }
+        })
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    deleteEmpData()
+  }
+
   const handleAddNewEmp = () => {
     const insertNewEmp = async () => {
       try {
@@ -103,14 +138,13 @@ const AddEmpModal = ({ isOpen, onClose, setLoadTable }: Props) => {
         response.json().then((json) => {
           const message = json.message
           if (response.status === 200) {
-            openToast(
-              'Insert successfully',
-              `Nhân viên được thêm thành công!`,
-              'success'
-            )
             insertNewPosition()
           } else {
-            openToast('Insert Failed!', `Detail: ${message}!`, 'error')
+            openToast(
+              'Failed To Add New Employee!',
+              `Detail: ${message}!`,
+              'error'
+            )
           }
         })
       } catch (err) {
@@ -138,14 +172,14 @@ const AddEmpModal = ({ isOpen, onClose, setLoadTable }: Props) => {
           const message = json.message
           if (response.status === 200) {
             openToast(
-              'Insert successfully',
-              `Nhân viên thêm vào phòng ban thành công!`,
+              'Employee Insert successfully',
+              `Nhân viên được thêm thành công!`,
               'success'
             )
             setLoadTable(true)
             handleCloseModal()
           } else {
-            openToast('Insert Failed!', `Detail: ${message}!`, 'error')
+            handleDeleteEmp(message)
           }
         })
       } catch (err) {
@@ -185,8 +219,12 @@ const AddEmpModal = ({ isOpen, onClose, setLoadTable }: Props) => {
           } else {
             response.json().then((json) => {
               const message = json.message
-              openToast('Failed to get data', `Detail: ${message}!`, 'error')
-              onClose()
+              openToast(
+                'Failed to get department data',
+                `Detail: ${message}!`,
+                'error'
+              )
+              handleCloseModal()
             })
           }
         } catch (err) {
@@ -273,8 +311,10 @@ const AddEmpModal = ({ isOpen, onClose, setLoadTable }: Props) => {
                 name={'position'}
                 onChange={handleChange}
               >
-                <option value="NHAN VIEN">{'Nhân viên'}</option>
-                <option value="QUAN LY">{'Quản lý'}</option>
+                <option value="NHAN VIEN" selected>
+                  {'Nhân viên'}
+                </option>
+                {/* <option value="QUAN LY">{'Quản lý'}</option> */}
               </Select>
             </FormControl>
 

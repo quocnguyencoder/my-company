@@ -154,14 +154,14 @@ const EmpInfoModal = ({
           const message = json.message
           if (response.status === 200) {
             openToast(
-              'Update successfully',
-              `Cập nhật thông tin thành công!`,
+              'Employee Update successfully',
+              `Cập nhật thông tin nhân viên thành công!`,
               'success'
             )
             setLoadTable(true)
             setEditable(false)
           } else {
-            openToast('Update Failed!', `Detail: ${message}!`, 'error')
+            openToast('Employee Update Failed!', `Detail: ${message}!`, 'error')
           }
         })
       } catch (err) {
@@ -186,7 +186,7 @@ const EmpInfoModal = ({
           if (response.status === 200) {
             openToast(
               'Position update successfully',
-              `Chuyển phòng ban thành công`,
+              `Chuyển phòng ban của nhân viên thành công`,
               'success'
             )
             setEmpInfo({
@@ -249,14 +249,14 @@ const EmpInfoModal = ({
           const message = json.message
           if (response.status === 200) {
             openToast(
-              'Delete successfully',
+              'Employee Delete Successfully',
               `Xóa nhân viên thành công!`,
               'success'
             )
             setLoadTable(true)
             handleCloseModal()
           } else {
-            openToast('Delete failed', `Detail: ${message}!`, 'error')
+            openToast('Employee Delete Failed', `Detail: ${message}!`, 'error')
           }
         })
       } catch (err) {
