@@ -7,6 +7,7 @@ import { MyGlobalContext } from '../context/GlobalContext'
 import { Employee } from '../types/user'
 import { useRouter } from 'next/router'
 import * as ROUTES from '../routes'
+import Head from 'next/head'
 import SidebarWithHeader from '../components/common/SidebarWithHeader'
 import Footer from '../components/common/Footer'
 
@@ -19,6 +20,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ChakraProvider>
+      <Head>
+        <title>My Company</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <MyGlobalContext.Provider
         value={{ info, setInfo, currEmp, setCurrEmp, currTab, setCurrTab }}
       >

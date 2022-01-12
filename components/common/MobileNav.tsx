@@ -66,7 +66,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       </Text>
 
       <HStack spacing={{ base: '0', md: '6' }}>
-        <Button onClick={toggleColorMode}>
+        <Button mr={2} onClick={toggleColorMode}>
           {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
         </Button>
         <Flex alignItems={'center'}>
